@@ -1,0 +1,47 @@
+  services:
+  
+    service-url-shortener:
+        container_name: url-shortener
+        image: testing_shortener:latest
+        build:
+          context: .
+          dockerfile: docker/Dockerfile
+          target: development
+          args:
+            NODE_ENV: dev
+        networks:
+          alter_network:
+            ipv4_address: 30.7.1.200
+        volumes:
+          - ./src:/home/alter_user/url-shortener/src
+          # - ./node_modules://home/alter_user/url-shortener/node_modules/
+        command: npm run start:debug
+        
+    service-auth-postgres:
+      container_name: alter-postgres
+      image: alt-postgres
+      build:
+        context: ./db
+      environment:
+        POSTGRES_USER: alt_user
+        POSTGRES_PASSWORD: alter
+        POSTGRES_DB: alter
+      ports:
+        - 5432:5432
+      volumes:
+        - ./init-scripts:/docker-entrypoint-initdb.d
+        - pgdata:/var/lib/postgresql/data
+      networks:
+        alter_network:
+          ipv4_address: 30.7.1.201
+
+  networks:
+    alter_network:
+      driver: bridge
+      ipam:
+        driver: default
+        config:
+          - subnet: 30.7.0.0/16
+
+  volumes:
+    pgdata:
