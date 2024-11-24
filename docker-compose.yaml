@@ -1,5 +1,4 @@
   services:
-  
     service-url-shortener:
         container_name: url-shortener
         image: testing_shortener:latest

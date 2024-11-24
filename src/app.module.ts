@@ -15,10 +15,8 @@ import { ShortUrlUniqueOS } from './entities/short_url_os.entity';
 import { ShortUrl } from './entities/short_url.entity';
 import { ShortUrlLogs } from './entities/short_url_logs.entity';
 import { ShortUrlUniqueDevice } from './entities/short_url_device.entity';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
-import { RateLimitExceptionFilter } from './common/filters/rate-limiting.filter';
 import { RateLimitService } from './common/service/rate-limiting.service';
 
 @Module({
@@ -63,10 +61,6 @@ import { RateLimitService } from './common/service/rate-limiting.service';
     AppService,
     JwtService,
     RateLimitService,
-    {
-      provide: APP_FILTER,
-      useClass: RateLimitExceptionFilter,
-    },
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,

@@ -14,7 +14,6 @@ import { GoogleAuthGuard } from 'src/common/guard/jwt.guard';
 import { Request, Response } from 'express';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
-import { Throttle } from '@nestjs/throttler';
 import { RateLimitService } from 'src/common/service/rate-limiting.service';
 @Controller('api')
 export class UrlController {
