@@ -45,7 +45,7 @@ export class UrlService {
     if (!shortUrl) {
       throw new NotFoundException('Short URL not found');
     }
-    const ip = request?.ip;
+    const ip = request?.ip ;
     const userAgent = request.headers['user-agent'] || '';
     const osName = this.getOSFromUserAgent(userAgent);
     const deviceName = this.getDeviceFromUserAgent(userAgent);
@@ -55,7 +55,7 @@ export class UrlService {
       osName,
       deviceName,
     };
-    await this.shortUrlLogsDal.createShortUrlLogs(data);
+     await this.shortUrlLogsDal.createShortUrlLogs(data);
     return shortUrl.longUrl;
   }
 

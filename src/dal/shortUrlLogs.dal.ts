@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ShortUrl } from 'src/entities/short_url.entity';
 import { ShortUrlLogs } from 'src/entities/short_url_logs.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class ShortUrlLogsDal {
   constructor(
+    @InjectRepository(ShortUrl) private readonly shortUrl: Repository<ShortUrl>,
     @InjectRepository(ShortUrlLogs)
     private readonly shortUrlLogs: Repository<ShortUrlLogs>,
   ) {}

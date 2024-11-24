@@ -53,3 +53,21 @@ CREATE TABLE "short_url_unique_device" (
     "updated" TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_short_url_device FOREIGN KEY ("short_url_alias") REFERENCES "short_url" ("alias") ON DELETE CASCADE
 );
+
+
+CREATE OR REPLACE FUNCTION update_short_url_clicks()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE short_url
+    SET total_clicks = total_clicks + 1
+    WHERE alias = NEW.short_url_alias;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_update_short_url_clicks
+AFTER INSERT ON short_url_logs
+FOR EACH ROW
+EXECUTE FUNCTION update_short_url_clicks();
