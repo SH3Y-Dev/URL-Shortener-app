@@ -17,16 +17,15 @@ import { ShortUrlLogs } from './entities/short_url_logs.entity';
 import { ShortUrlUniqueDevice } from './entities/short_url_device.entity';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { RedisModule } from '@nestjs-modules/ioredis';
+import { RateLimitExceptionFilter } from './common/filters/rate-limiting.filter';
+import { RateLimitService } from './common/service/rate-limiting.service';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          limit: 10,
-          ttl: 60,
-        },
-      ],
+    RedisModule.forRoot({
+      type: 'single',
+      url: process.env.REDIS_URL,
     }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -63,9 +62,10 @@ import { AnalyticsModule } from './analytics/analytics.module';
   providers: [
     AppService,
     JwtService,
+    RateLimitService,
     {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      provide: APP_FILTER,
+      useClass: RateLimitExceptionFilter,
     },
     {
       provide: APP_PIPE,

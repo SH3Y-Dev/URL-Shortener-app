@@ -8,12 +8,15 @@ import { ShortUrlDal } from 'src/dal/shortUrl.dal';
 import { ShortUrl } from 'src/entities/short_url.entity';
 import { ShortUrlLogsDal } from 'src/dal/shortUrlLogs.dal';
 import { Request } from 'express';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class UrlService {
   constructor(
     private shortUrlDal: ShortUrlDal,
     private shortUrlLogsDal: ShortUrlLogsDal,
+    
   ) {}
   async createShortUrl(
     longUrl: string,
