@@ -8,6 +8,7 @@ import { ShortUrlUniqueOS } from 'src/entities/short_url_os.entity';
 import { ShortUrl } from 'src/entities/short_url.entity';
 import { ShortUrlUniqueDevice } from 'src/entities/short_url_device.entity';
 import { ShortUrlLogsDal } from './shortUrlLogs.dal';
+import { AnalyticsDal } from './analytics.dal';
 @Global()
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { ShortUrlLogsDal } from './shortUrlLogs.dal';
       ShortUrlUniqueDevice,
     ]),
   ],
-  providers: [UserDal, ShortUrlDal, ShortUrlLogsDal],
-  exports: [UserDal, ShortUrlDal, ShortUrlLogsDal],
+  providers: [UserDal, ShortUrlDal, ShortUrlLogsDal, AnalyticsDal],
+  exports: [UserDal, ShortUrlDal, ShortUrlLogsDal, AnalyticsDal],
 })
 export class DalModule {}

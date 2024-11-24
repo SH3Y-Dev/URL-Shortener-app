@@ -33,6 +33,7 @@ export class UrlService {
     shortUrl.shortUrl = `${
       process.env.BASE_URL || 'http://localhost:3000'
     }/${alias}`;
+    shortUrl.emailId = 'shreyas@gmail.com';
     return this.shortUrlDal.createShortUrl(shortUrl);
   }
 
@@ -45,7 +46,7 @@ export class UrlService {
     if (!shortUrl) {
       throw new NotFoundException('Short URL not found');
     }
-    const ip = request?.ip ;
+    const ip = request?.ip;
     const userAgent = request.headers['user-agent'] || '';
     const osName = this.getOSFromUserAgent(userAgent);
     const deviceName = this.getDeviceFromUserAgent(userAgent);

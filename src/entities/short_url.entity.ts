@@ -32,6 +32,9 @@ export class ShortUrl {
   @Column({ name: 'click_by_date', type: 'jsonb', default: '[]' })
   clickByDate: Record<string, any>[];
 
+  @Column({ name: 'email_id', type: 'varchar', length: 255, nullable: false })
+  emailId: string;
+
   @Column({
     name:'alias',
     type: 'varchar',

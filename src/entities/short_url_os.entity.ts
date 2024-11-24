@@ -14,10 +14,8 @@ export class ShortUrlUniqueOS {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ShortUrl, (shortUrl) => shortUrl.alias, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'alias' })
+  @ManyToOne(() => ShortUrl, { eager: true })
+  @JoinColumn({ name: 'short_url_alias', referencedColumnName: 'alias' }) 
   shortUrl: ShortUrl;
 
   @Column({ name: 'os_name', type: 'varchar', length: 255, nullable: false })

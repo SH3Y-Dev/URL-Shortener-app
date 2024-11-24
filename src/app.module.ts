@@ -16,6 +16,7 @@ import { ShortUrl } from './entities/short_url.entity';
 import { ShortUrlLogs } from './entities/short_url_logs.entity';
 import { ShortUrlUniqueDevice } from './entities/short_url_device.entity';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
       ShortUrlLogs,
       ShortUrlUniqueDevice,
     ]),
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [
