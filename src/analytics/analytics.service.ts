@@ -9,7 +9,11 @@ export class AnalyticsService {
     return await this.analyticsDal.getAnalytics(alias);
   }
 
-  async getAnalyticsForTopic(topic: string){
+  async getAnalyticsForTopic(topic: string) {
     return await this.analyticsDal.getAnalyticsByTopic(topic);
+  }
+
+  async getOverallAnalytics(emailId: string) {
+    return await this.analyticsDal.getOverallAnalytics(emailId);
   }
 }

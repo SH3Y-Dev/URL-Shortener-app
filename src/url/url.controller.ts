@@ -1,4 +1,13 @@
-import {  Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { UrlService } from './url.service';
 import { CreateShortUrlDTO } from 'src/common/dto/url.dto';
 import { GoogleAuthGuard } from 'src/common/guard/jwt.guard';
@@ -9,13 +18,17 @@ export class UrlController {
 
   @UseGuards(GoogleAuthGuard)
   @Post('shorten')
-  async createShortUrl(@Body() createShortUrlDto: CreateShortUrlDTO) {
+  async createShortUrl(
+    @Body() createShortUrlDto: CreateShortUrlDTO,
+    @Req() req: any,
+  ) {
     const { longUrl, customAlias, topic } = createShortUrlDto;
-
+    const emailId = req?.user?.email;
     const shortUrl = await this.urlService.createShortUrl(
       longUrl,
       customAlias,
       topic,
+      emailId,
     );
 
     return {

@@ -19,6 +19,7 @@ export class UrlService {
     longUrl: string,
     customAlias?: string,
     topic?: string,
+    emailId?:string
   ): Promise<ShortUrl> {
     const alias = customAlias || this.generateAlias();
     const existingAlias = await this.shortUrlDal.findByAlias(alias);
@@ -33,7 +34,7 @@ export class UrlService {
     shortUrl.shortUrl = `${
       process.env.BASE_URL || 'http://localhost:3000'
     }/${alias}`;
-    shortUrl.emailId = 'shreyas@gmail.com';
+    shortUrl.emailId = emailId;
     return this.shortUrlDal.createShortUrl(shortUrl);
   }
 

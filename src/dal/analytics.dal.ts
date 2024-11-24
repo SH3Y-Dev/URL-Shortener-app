@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 export class AnalyticsDal {
   constructor(
     @InjectRepository(ShortUrl)
-    private readonly shortUrlRepository: Repository<ShortUrl>
+    private readonly shortUrlRepository: Repository<ShortUrl>,
   ) {}
 
   async getAnalytics(alias: string) {
@@ -88,6 +88,101 @@ export class AnalyticsDal {
         totalClicks: url.totalClicks,
         uniqueClicks: url.uniqueClicks,
       })),
+    };
+  }
+
+  async getOverallAnalytics(emailId: string) {
+    const shortUrls = await this.shortUrlRepository
+      .createQueryBuilder('shortUrl')
+      .leftJoinAndSelect('shortUrl.uniqueOS', 'uniqueOS')
+      .leftJoinAndSelect('shortUrl.uniqueDevices', 'uniqueDevices')
+      .select([
+        'shortUrl.id',
+        'shortUrl.shortUrl',
+        'shortUrl.totalClicks',
+        'shortUrl.uniqueClicks',
+        'shortUrl.clickByDate',
+        'uniqueOS.osName',
+        'uniqueOS.ukClick',
+        'uniqueOS.ukUser',
+        'uniqueDevices.deviceName',
+        'uniqueDevices.ukClick',
+        'uniqueDevices.ukUser',
+      ])
+      .where('shortUrl.emailId = :emailId', { emailId })
+      .getMany();
+
+    if (shortUrls.length === 0) {
+      throw new NotFoundException('No URLs found for the specified user');
+    }
+
+    const totalUrls = shortUrls.length;
+    const totalClicks = shortUrls.reduce(
+      (sum, url) => sum + url.totalClicks,
+      0,
+    );
+    const uniqueClicks = shortUrls.reduce(
+      (sum, url) => sum + url.uniqueClicks,
+      0,
+    );
+
+    const clicksByDate = shortUrls
+      .flatMap((url) => url.clickByDate)
+      .reduce((acc, clickEntry) => {
+        const existing = acc.find((item) => item.date === clickEntry.date);
+        if (existing) {
+          existing.click_count += clickEntry.click_count || 0;
+        } else {
+          acc.push({
+            date: clickEntry.date,
+            click_count: clickEntry.click_count || 0,
+          });
+        }
+        return acc;
+      }, []);
+
+    const osType = shortUrls
+      .flatMap((url) => url.uniqueOS)
+      .reduce((acc, os) => {
+        const existing = acc.find((item) => item.osName === os.osName);
+        if (existing) {
+          existing.uniqueClicks += os.ukClick;
+          existing.uniqueUsers += os.ukUser;
+        } else {
+          acc.push({
+            osName: os.osName,
+            uniqueClicks: os.ukClick,
+            uniqueUsers: os.ukUser,
+          });
+        }
+        return acc;
+      }, []);
+
+    const deviceType = shortUrls
+      .flatMap((url) => url.uniqueDevices)
+      .reduce((acc, device) => {
+        const existing = acc.find(
+          (item) => item.deviceName === device.deviceName,
+        );
+        if (existing) {
+          existing.uniqueClicks += device.ukClick;
+          existing.uniqueUsers += device.ukUser;
+        } else {
+          acc.push({
+            deviceName: device.deviceName,
+            uniqueClicks: device.ukClick,
+            uniqueUsers: device.ukUser,
+          });
+        }
+        return acc;
+      }, []);
+    return {
+      totalUrls,
+      totalClicks,
+      uniqueClicks,
+      clicksByDate,
+      osType,
+      deviceType,
     };
   }
 }
