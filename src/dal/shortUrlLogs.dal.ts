@@ -21,8 +21,6 @@ export class ShortUrlLogsDal {
         where: { shortUrl: { alias: shortUrl.alias }, ip },
       });
 
-      console.log("ip exist",ipExists);
-      
       // Create a new log entry
       const shortUrlLogs = this.shortUrlLogs.create({
         shortUrl,
@@ -31,6 +29,31 @@ export class ShortUrlLogsDal {
         deviceName,
       });
       await this.shortUrlLogs.save(shortUrlLogs);
+
+      // Update clickByDate array
+      const today = new Date().toISOString().split('T')[0];
+      let clickByDate = [...shortUrl.clickByDate];
+
+      const dateEntry = clickByDate.find((entry) => entry.date === today);
+      if (dateEntry) {
+        dateEntry.click_count += 1;
+      } else {
+        clickByDate.push({ date: today, click_count: 1 });
+      }
+
+      if (clickByDate.length > 7) {
+        clickByDate = clickByDate.slice(-7);
+      }
+
+      shortUrl.clickByDate = clickByDate;
+
+      // Save updated shortUrl
+      await this.shortUrl.update(
+        { alias: shortUrl.alias },
+        {
+          clickByDate,
+        },
+      );
 
       // Update totalClicks and uniqueClicks
       if (!ipExists) {
